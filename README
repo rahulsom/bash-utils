@@ -1,0 +1,3 @@
+Has some basic utilities for use in bash scripts
+* Logger
+* Try-catch-finally
