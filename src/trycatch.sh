@@ -2,7 +2,7 @@
 #
 
 if [ "$BASH_UTIL_LOGGER" != "defined" ]; then
-    source `dirname $0`/logger.sh
+    source $(dirname $0)/logger.sh
 fi
 
 #
@@ -77,7 +77,7 @@ trycatch () {
 #
 # Test case
 #
-if [ `basename $0` = trycatch.sh ]; then
+if [ $(basename $0) = trycatch.sh ]; then
     trycatch \
         2 \
             "cat /etc/init.d/postgresql-8.4" \
