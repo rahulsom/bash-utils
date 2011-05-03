@@ -46,7 +46,8 @@ tail -n+\$ARCHIVE \$0 | tar xzv -C \$TMPDIR
 
 CDIR=\`pwd\`
 cd \$TMPDIR
-./main.sh \$*
+./main.sh \$* > >(tee \$CDIR/\$0.\$\$.out) 2> >(tee \$CDIR/\$0.\$\$.err >&2)
+
 
 cd \$CDIR
 rm -rf \$TMPDIR
