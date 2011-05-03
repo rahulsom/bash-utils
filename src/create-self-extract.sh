@@ -70,6 +70,7 @@ if [ -e "payload.tar" ]; then
     if [ -e "payload.tar.gz" ]; then
         cat decompress payload.tar.gz > $MY_PROJECT.bsx
         chmod u+x $MY_PROJECT.bsx
+        rm payload.tar.gz
     else
         echo "payload.tar.gz does not exist"
         exit 1
