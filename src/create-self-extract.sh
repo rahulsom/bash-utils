@@ -20,33 +20,57 @@ fi
 # Create directory
 mkdir $MY_PROJECT
 cd $MY_PROJECT
-mkdir payload
+mkdir -p payload/libs
+if [ -e /tmp/bash-utils ]; then
+  rm -rf /tmp/bash-utils
+fi
+git clone git://github.com/rahulsom/bash-utils.git /tmp/bash-utils
+cp /tmp/bash-utils/src/* payload/libs
+rm -rf /tmp/bash-utils
 
 # Create dummy script
 cat > payload/main.sh << EOF
-#!/bin/bash
-echo "Main"
-echo "Hello world!"
-echo "Args: \$*"
+#!/bin/bash -eu
+. libs/logger.sh
+. libs/colors.sh
+. libs/tasks.sh
+
+ANERR="\${ANESC}\${ANFG}\${ANR}\${ANEND}"
+abort() {
+  echo -e "\${ANERR}Script execution was aborted. See logs for more details.\${ANRESET}"
+  exit 1
+}
+trap abort ERR
+
+info  "Starting installer"
+debug "Args: (\$#) '\$*'"
+debug "UID: \$UID(\$(getent passwd \$UID| cut -d: -f1))"
+debug "PID: \$\$"
+echo -e "\${ANESC}\${ANBOL};\${ANBG}\${ANB}\${ANEND}Installing Application\${ANRESET}"
+echo 
+taskdef "Performing task XXX"
+taskok
+
 EOF
 chmod u+x payload/main.sh
 
 # Create decompress script
 cat > decompress << EOF
 #!/bin/bash
-echo ""
-echo "Self Extracting Installer"
-echo ""
-
 export TMPDIR=\`mktemp -d /tmp/selfextract.XXXXXX\`
 
 ARCHIVE=\`awk '/^__ARCHIVE_BELOW__/ {print NR + 1; exit 0; }' \$0\`
 
-tail -n+\$ARCHIVE \$0 | tar xzv -C \$TMPDIR
+tail -n+\$ARCHIVE \$0 | tar xz -C \$TMPDIR
 
 CDIR=\`pwd\`
 cd \$TMPDIR
-./main.sh \$* > >(tee \$CDIR/\$0.\$\$.out) 2> >(tee \$CDIR/\$0.\$\$.err >&2)
+export SX_DEBUG=\$(echo " \$* "| grep -c " \-\-debug ")
+if [ \$SX_DEBUG = 0 ]; then
+  ./main.sh \$* > >(tee \$CDIR/\$0.\$\$.out) 2> \$CDIR/\$0.\$\$.err
+else
+  ./main.sh \$* > >(tee \$CDIR/\$0.\$\$.out) 2> >(tee \$CDIR/\$0.\$\$.err >&2)
+fi
 
 
 cd \$CDIR
@@ -68,8 +92,8 @@ if [ -e "payload.tar" ]; then
     gzip payload.tar
 
     if [ -e "payload.tar.gz" ]; then
-        cat decompress payload.tar.gz > $MY_PROJECT.bsx
-        chmod u+x $MY_PROJECT.bsx
+        cat decompress payload.tar.gz > $MY_PROJECT
+        chmod +x $MY_PROJECT
         rm payload.tar.gz
     else
         echo "payload.tar.gz does not exist"
@@ -80,7 +104,7 @@ else
     exit 1
 fi
 
-echo "$MY_PROJECT.bsx created"
+echo "$MY_PROJECT created"
 exit 0
 EOF
 chmod u+x build
