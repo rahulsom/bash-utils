@@ -13,7 +13,7 @@ taskdef() {
     TASKLEN=1
     return
   fi
-  if [ "$DO_DEBUG" = "0" ]; then
+  if [ "$SX_DEBUG" = "0" ]; then
     echo -ne ""
   else 
     echo ""
