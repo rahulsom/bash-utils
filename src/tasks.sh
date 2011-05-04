@@ -1,6 +1,14 @@
+LINELEN=68
+ML=0
 taskdef() {
-  echo -n "  * $1"
-  TASKLEN=$(echo "  * $1" | wc -c)
+  if [ $ML = 1 ]; then
+    echo -e "${ANESC}${ANDIS}${ANEND} -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  ${ANRESET}"
+    echo "  * $1"
+    TASKLEN=1
+  else
+    echo -n "  * $1"
+    TASKLEN=$(echo "  * $1" | wc -c)
+  fi
   if [ "$#" -gt 2 ]; then
     if [ "$2" = "BRK" ]; then
       echo ""
@@ -8,7 +16,7 @@ taskdef() {
       return
     fi
   fi
-  if [ $TASKLEN -gt 70 ]; then
+  if [ $TASKLEN -gt $LINELEN ]; then
     echo ""
     TASKLEN=1
     return
@@ -22,10 +30,10 @@ taskdef() {
   fi
 }
 taskok() {
-  local PADDING=$((70 - TASKLEN))
+  local PADDING=$((LINELEN - TASKLEN))
   printf "%${PADDING}s [${ANESC}${ANBG}${ANG};${ANBOL}${ANEND}   OK   ${ANRESET}]\n" ""
 }
 taskerror() {
-  local PADDING=$((70 - TASKLEN))
+  local PADDING=$((LINELEN - TASKLEN))
   printf "%${PADDING}s [${ANESC}${ANBG}${ANR};${ANBOL}${ANEND}  FAIL  ${ANRESET}]\n" "" 
 }
