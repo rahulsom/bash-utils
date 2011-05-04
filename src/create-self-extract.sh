@@ -50,6 +50,7 @@ echo -e "\${ANESC}\${ANBOL};\${ANBG}\${ANB}\${ANEND}Installing Application\${ANR
 echo 
 taskdef "Performing task XXX"
 taskok
+info  "End of installer"
 
 EOF
 chmod u+x payload/main.sh
