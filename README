@@ -1,3 +1,8 @@
+github.com/rahulsom/.rahulsom.dotfiles has most of the useful stuff.
+
+This is now deprecated.
+
+
 Has some basic utilities for use in bash scripts
 * Logger
 * Try-catch-finally
